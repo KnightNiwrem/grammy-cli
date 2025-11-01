@@ -14,5 +14,8 @@
     "./package-lock.json",
     "./test/cov_profile"
   ],
+  "imports": {
+    "@std/testing/asserts": "jsr:@std/testing@0.224.0/asserts"
+  },
   "fmt": { "proseWrap": "preserve" }
 }
