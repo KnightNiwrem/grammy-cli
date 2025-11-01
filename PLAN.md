@@ -83,14 +83,19 @@
 ## 7. Implementation Phases & Timeline
 
 ### Phase 0 – Foundations ✅ **COMPLETE**
+
 **Estimated: 1-2 days | Actual: Complete**
-- Set up repo structure (`src`, `templates`, `scripts`), configure `deno.json`, lock file, and
-  basic CI stub.
+
+- Set up repo structure (`src`, `templates`, `scripts`), configure `deno.json`, lock file, and basic
+  CI stub.
 - Implement logging, config loading, and utilities.
-- **Exit Criteria:** Repo structured, dependencies locked, utilities testable, CI runs fmt/lint/test.
+- **Exit Criteria:** Repo structured, dependencies locked, utilities testable, CI runs
+  fmt/lint/test.
 
 ### Phase 1 – CLI Core 🚧 **IN PROGRESS**
+
 **Estimated: 3-4 days**
+
 - Build Commander entry, parse global options (verbosity, runtime preference, non-interactive).
 - Implement `list` and `doctor` commands to validate environment and show templates.
 - Wire interactive prompt layer with non-interactive flags fallback.
@@ -98,7 +103,9 @@
 - **Dependencies:** Phase 0 complete.
 
 ### Phase 2 – Template Engine Integration
+
 **Estimated: 4-5 days**
+
 - Integrate Eta, create manifest loader, ensure cross-platform file emission.
 - Provide base templates (TS/JS minimal) and smoke tests verifying scaffolds run.
 - Implement `new` command with basic template scaffolding.
@@ -106,7 +113,9 @@
 - **Dependencies:** Phase 1 complete, manifest schema defined.
 
 ### Phase 3 – Advanced Templates & Plugins
+
 **Estimated: 5-6 days**
+
 - Add conversations/i18n/rate-limiter presets with configuration prompts.
 - Implement plugin flag parsing for `new` command to compose templates.
 - Document deployment recipes within generated projects.
@@ -115,7 +124,9 @@
 - **Dependencies:** Phase 2 complete, plugin selection UX designed.
 
 ### Phase 4 – QA & Distribution
+
 **Estimated: 3-4 days**
+
 - Author unit/integration tests, configure CI matrix across Deno/Node/Bun.
 - Implement `deno task release` workflow, finalize release tooling.
 - Run `deno publish --dry-run` and address validation issues.
@@ -128,25 +139,27 @@
 
 ## 8. Risks & Mitigations
 
-| Risk | Impact | Likelihood | Mitigation Strategy | Status |
-|------|--------|------------|---------------------|---------|
-| **JSR Publishing Errors** | High - blocks release | Medium | Run `deno publish --dry-run` in CI before releases; maintain publish checklist | Mitigated |
-| **Template Drift** | Medium - outdated templates | High | Add snapshot tests for rendered outputs; enforce lint/test pipelines on generated projects; version-pin template dependencies | Planned |
-| **Runtime Incompatibilities** | High - breaks user experience | Medium | Maintain CI matrix tests across Deno/Node/Bun; explicit runtime guards in CLI; document minimum versions | Active |
-| **Plugin Maintenance** | Medium - outdated plugins | Medium | Centralize plugin metadata in manifest; document version pinning strategy; quarterly dependency review | Planned |
-| **Breaking Changes in grammY** | Medium - templates fail | Low | Pin grammY versions in templates; subscribe to grammY release notes; test against beta releases | Planned |
-| **Eta Template Bugs** | Low - generation issues | Low | Comprehensive template smoke tests; escape user input properly; validate rendered output | Active |
-| **Poor CLI UX** | Medium - low adoption | Medium | User testing with early adopters; comprehensive help text; non-interactive mode for CI | Active |
+| Risk                           | Impact                        | Likelihood | Mitigation Strategy                                                                                                           | Status    |
+| ------------------------------ | ----------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | --------- |
+| **JSR Publishing Errors**      | High - blocks release         | Medium     | Run `deno publish --dry-run` in CI before releases; maintain publish checklist                                                | Mitigated |
+| **Template Drift**             | Medium - outdated templates   | High       | Add snapshot tests for rendered outputs; enforce lint/test pipelines on generated projects; version-pin template dependencies | Planned   |
+| **Runtime Incompatibilities**  | High - breaks user experience | Medium     | Maintain CI matrix tests across Deno/Node/Bun; explicit runtime guards in CLI; document minimum versions                      | Active    |
+| **Plugin Maintenance**         | Medium - outdated plugins     | Medium     | Centralize plugin metadata in manifest; document version pinning strategy; quarterly dependency review                        | Planned   |
+| **Breaking Changes in grammY** | Medium - templates fail       | Low        | Pin grammY versions in templates; subscribe to grammY release notes; test against beta releases                               | Planned   |
+| **Eta Template Bugs**          | Low - generation issues       | Low        | Comprehensive template smoke tests; escape user input properly; validate rendered output                                      | Active    |
+| **Poor CLI UX**                | Medium - low adoption         | Medium     | User testing with early adopters; comprehensive help text; non-interactive mode for CI                                        | Active    |
 
 ## 9. Testing Strategy
 
 ### Unit Tests
+
 - **Coverage Target:** ≥80% for core utilities, template rendering, and command logic
 - **Scope:** Individual functions, utility modules, manifest parsing, path resolution
 - **Tools:** Deno's built-in test runner, assertion library
 - **Frequency:** Run on every commit via CI
 
 ### Integration Tests
+
 - **Scope:** End-to-end CLI command execution, template generation workflows
 - **Test Cases:**
   - `new` command generates valid project structure
@@ -156,6 +169,7 @@
 - **Frequency:** Run in CI before merges to main
 
 ### Smoke Tests
+
 - **Scope:** Generated project functionality
 - **Test Cases:**
   - Template projects instantiate without errors
@@ -165,12 +179,14 @@
 - **Frequency:** Run in Phase 2+ for each template variant
 
 ### Cross-Runtime Testing
+
 - **Matrix:** Deno (latest stable), Node (18, 20, 22 LTS), Bun (latest stable)
 - **Scope:** CLI execution, template generation, generated project execution
 - **CI Configuration:** GitHub Actions matrix strategy
 - **Frequency:** On PR and pre-release
 
 ### Regression Tests
+
 - **Snapshot Tests:** Rendered template outputs to catch unintended changes
 - **Breaking Change Detection:** Version compatibility tests for grammY and plugins
 - **Frequency:** On every release branch
@@ -178,6 +194,7 @@
 ## 10. Open Questions & Decisions
 
 ### Resolved Decisions
+
 - **Q1: Default deployment target for advanced template?**
   - **Decision (Target: Phase 3 start):** Provide **both** Deno Deploy and Node deployment recipes
     in generated projects. Default example will use Deno Deploy due to zero-config nature, but
@@ -186,6 +203,7 @@
     vision.
 
 ### Pending Decisions
+
 - **Q2: Plugin discovery/marketplace command in v1?**
   - **Status:** Backlogged to post-v1.0
   - **Rationale:** Adds complexity; focus v1 on core scaffolding. Evaluate after user feedback.
@@ -211,19 +229,22 @@
 ## 11. Communication & Reporting
 
 ### Documentation Updates
+
 - **TASKS.md:** Day-to-day execution tracking with status updates after task completion
 - **AGENTS.md:** Update when workflows, commands, conventions, or tooling changes
 - **PLAN.md:** Major strategic changes, scope adjustments, or architectural pivots
 
 ### Commit Message Standards
-- Reference plan sections when implementing planned features (e.g., "Implement doctor command
-  [Phase 1, Section 7.1]")
+
+- Reference plan sections when implementing planned features (e.g., "Implement doctor command [Phase
+  1, Section 7.1]")
 - Link to resolved open questions when making decisions (e.g., "Use Deno Deploy as default
   deployment [Section 10, Q1]")
 - Use conventional commits format: `type(scope): description`
   - Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`
 
 ### Review Checkpoints
+
 - **Phase Completion:** Update phase status in all three docs, conduct retrospective
 - **Weekly:** Review TASKS.md, update statuses, identify blockers
 - **Pre-Release:** Verify all documentation is current, open questions addressed

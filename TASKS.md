@@ -15,6 +15,7 @@
 **Timeline:** 1-2 days | **Status:** Complete
 
 ### P0.1 - [x] (H) Establish repo scaffolding
+
 - **Effort:** 2-3h
 - **Dependencies:** None
 - **Acceptance Criteria:**
@@ -24,6 +25,7 @@
 - **Completed:** ✓
 
 ### P0.2 - [x] (H) Configure lint/format/test tasks
+
 - **Effort:** 1-2h
 - **Dependencies:** P0.1
 - **Acceptance Criteria:**
@@ -33,6 +35,7 @@
 - **Completed:** ✓
 
 ### P0.3 - [x] (M) Draft minimal CI workflow
+
 - **Effort:** 2h
 - **Dependencies:** P0.2
 - **Acceptance Criteria:**
@@ -43,6 +46,7 @@
 - **Completed:** ✓
 
 ### P0.4 - [x] (H) Implement shared utilities
+
 - **Effort:** 4-6h
 - **Dependencies:** P0.1
 - **Acceptance Criteria:**
@@ -53,7 +57,8 @@
   - All utilities exported from `src/utils/index.ts`
 - **Completed:** ✓
 
-**Phase Retrospective:** Foundation completed successfully. Utilities well-tested and CI operational.
+**Phase Retrospective:** Foundation completed successfully. Utilities well-tested and CI
+operational.
 
 ---
 
@@ -63,6 +68,7 @@
 **Timeline:** 3-4 days | **Status:** In Progress
 
 ### P1.1 - [ ] (H) Implement Commander-based entry point
+
 - **Effort:** 4-6h
 - **Dependencies:** P0.4
 - **Owner:** TBD
@@ -76,6 +82,7 @@
 - **Testing:** Run `deno run src/cli.ts --help` and verify output
 
 ### P1.2 - [ ] (H) Build `list` command
+
 - **Effort:** 3-4h
 - **Dependencies:** P1.1
 - **Owner:** TBD
@@ -89,6 +96,7 @@
 - **Testing:** Create stub manifest, run `list`, verify output format
 
 ### P1.3 - [ ] (H) Build `doctor` command
+
 - **Effort:** 4-5h
 - **Dependencies:** P1.1, P0.4
 - **Owner:** TBD
@@ -104,6 +112,7 @@
 - **Testing:** Run in various environments, verify detection accuracy
 
 ### P1.4 - [ ] (M) Wire interactive prompt layer
+
 - **Effort:** 3-4h
 - **Dependencies:** P1.1
 - **Owner:** TBD
@@ -127,6 +136,7 @@ comprehensive.
 **Timeline:** 4-5 days | **Status:** Pending
 
 ### P2.1 - [ ] (H) Integrate Eta renderer and file emission
+
 - **Effort:** 5-6h
 - **Dependencies:** P1.1
 - **Owner:** TBD
@@ -142,6 +152,7 @@ comprehensive.
 - **Testing:** Render sample template, verify output matches expected
 
 ### P2.2 - [ ] (H) Define template manifest schema and loader
+
 - **Effort:** 3-4h
 - **Dependencies:** P2.1
 - **Owner:** TBD
@@ -155,6 +166,7 @@ comprehensive.
 - **Testing:** Load manifest, validate against schema, handle malformed manifests
 
 ### P2.3 - [ ] (H) Author minimal TypeScript template
+
 - **Effort:** 6-8h
 - **Dependencies:** P2.2
 - **Owner:** TBD
@@ -170,6 +182,7 @@ comprehensive.
 - **Testing:** Generate project, run `deno task ok`, start bot with test token
 
 ### P2.4 - [ ] (M) Author minimal JavaScript template
+
 - **Effort:** 4-5h
 - **Dependencies:** P2.3
 - **Owner:** TBD
@@ -183,6 +196,7 @@ comprehensive.
 - **Testing:** Generate, lint, run with test token
 
 ### P2.5 - [ ] (M) Add automated smoke tests for generated projects
+
 - **Effort:** 4-5h
 - **Dependencies:** P2.3, P2.4
 - **Owner:** TBD
@@ -196,6 +210,7 @@ comprehensive.
 - **Testing:** Run smoke tests, verify all templates pass
 
 ### P2.6 - [ ] (H) Implement `new` command with basic scaffolding
+
 - **Effort:** 5-6h
 - **Dependencies:** P2.1, P2.2
 - **Owner:** TBD
@@ -222,6 +237,7 @@ smoke tests passing.
 **Timeline:** 5-6 days | **Status:** Pending
 
 ### P3.1 - [ ] (H) Implement plugin selection flags and prompts
+
 - **Effort:** 4-5h
 - **Dependencies:** P2.6
 - **Owner:** TBD
@@ -235,6 +251,7 @@ smoke tests passing.
 - **Testing:** Select various plugin combinations, verify template rendering
 
 ### P3.2 - [ ] (H) Create advanced template with conversations preset
+
 - **Effort:** 8-10h
 - **Dependencies:** P3.1
 - **Owner:** TBD
@@ -252,6 +269,7 @@ smoke tests passing.
 - **Testing:** Generate, verify plugins work, test conversation flow
 
 ### P3.3 - [ ] (M) Integrate i18n preset
+
 - **Effort:** 4-5h
 - **Dependencies:** P3.2
 - **Owner:** TBD
@@ -265,6 +283,7 @@ smoke tests passing.
 - **Testing:** Generate with i18n, switch locales, verify translations
 
 ### P3.4 - [ ] (M) Document deployment recipes
+
 - **Effort:** 4-5h
 - **Dependencies:** P3.2
 - **Owner:** TBD
@@ -290,6 +309,7 @@ presets tested.
 **Timeline:** 3-4 days | **Status:** Pending
 
 ### P4.1 - [ ] (H) Expand test suite to ≥80% coverage
+
 - **Effort:** 6-8h
 - **Dependencies:** All prior phases
 - **Owner:** TBD
@@ -303,6 +323,7 @@ presets tested.
 - **Testing:** Run `deno coverage`, verify ≥80% threshold
 
 ### P4.2 - [ ] (H) Configure CI matrix across runtimes
+
 - **Effort:** 4-5h
 - **Dependencies:** P4.1
 - **Owner:** TBD
@@ -316,6 +337,7 @@ presets tested.
 - **Testing:** Trigger CI on test PR, verify all matrix jobs pass
 
 ### P4.3 - [ ] (H) Implement release workflow
+
 - **Effort:** 5-6h
 - **Dependencies:** P4.2
 - **Owner:** TBD
@@ -330,6 +352,7 @@ presets tested.
 - **Testing:** Run release script in dry-run mode, verify steps complete
 
 ### P4.4 - [ ] (M) Validate npx/bunx execution paths
+
 - **Effort:** 3-4h
 - **Dependencies:** P4.3
 - **Owner:** TBD
@@ -342,6 +365,7 @@ presets tested.
 - **Testing:** Run via npx/bunx in fresh environments, verify functionality
 
 ### P4.5 - [ ] (L) Draft release notes and upgrade guidance
+
 - **Effort:** 2-3h
 - **Dependencies:** P4.3
 - **Owner:** TBD
@@ -363,6 +387,7 @@ documentation complete.
 **Phase Goal:** Future enhancements, post-v1.0 features.
 
 ### B1 - [ ] (M) Plugin marketplace/discovery feature
+
 - **Effort:** 2-3d
 - **Dependencies:** Phase 4 complete
 - **Owner:** TBD
@@ -370,6 +395,7 @@ documentation complete.
 - **Status:** Backlogged to v1.1+
 
 ### B2 - [ ] (L) Telemetry hooks (opt-in)
+
 - **Effort:** 2-3d
 - **Dependencies:** Phase 4 complete
 - **Owner:** TBD
@@ -377,6 +403,7 @@ documentation complete.
 - **Status:** Pending user feedback and privacy policy
 
 ### B3 - [ ] (L) Additional deployment targets
+
 - **Effort:** 3-4d
 - **Dependencies:** Phase 3 complete
 - **Owner:** TBD
@@ -384,6 +411,7 @@ documentation complete.
 - **Status:** Evaluate based on community requests
 
 ### B4 - [ ] (M) Template customization wizard
+
 - **Effort:** 4-5d
 - **Dependencies:** Phase 3 complete
 - **Owner:** TBD
@@ -395,15 +423,19 @@ documentation complete.
 ## Quick Reference
 
 ### Current Sprint Focus
+
 **Phase 1 - CLI Core:** Building foundation with Commander, list, and doctor commands.
 
 ### Next Up
+
 - P1.1: Commander entry point
 - P1.2: `list` command
 - P1.3: `doctor` command
 
 ### Blocked Tasks
+
 None currently.
 
 ### Task Assignment
+
 All Phase 1 tasks currently unassigned. Check with team lead for task pickup.

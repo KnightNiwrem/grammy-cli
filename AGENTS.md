@@ -13,12 +13,15 @@
 ## Tooling & Setup
 
 ### Prerequisites
-- **Deno:** Latest stable (≥1.46) - [Install Guide](https://deno.land/manual/getting_started/installation)
+
+- **Deno:** Latest stable (≥1.46) -
+  [Install Guide](https://deno.land/manual/getting_started/installation)
 - **Node.js:** LTS (≥18) for cross-runtime compatibility tests - [Download](https://nodejs.org/)
 - **Bun:** ≥1.1 for bunx validation path (optional) - [Install Guide](https://bun.sh/)
 - **Git:** For version control and collaboration
 
 ### Installation & Setup
+
 Currently in development phase. To work with the project:
 
 ```bash
@@ -34,6 +37,7 @@ deno task ok  # Runs fmt check, lint, and tests
 ```
 
 ### Dependencies
+
 - **Import Strategy:** Prefer `jsr:` and `npm:` specifiers over raw HTTPS imports to satisfy JSR
   publish rules.
 - **Current Dependencies:**
@@ -45,6 +49,7 @@ deno task ok  # Runs fmt check, lint, and tests
 ## Build, Lint, Test
 
 ### Standard Commands
+
 All commands configured in `deno.json`:
 
 ```bash
@@ -66,6 +71,7 @@ deno task ok
 ```
 
 ### Quality Assurance Workflow
+
 1. **During Development:** Run `deno fmt` frequently to maintain consistent style
 2. **Before Committing:** Always run `deno task ok` to ensure all checks pass
 3. **Before Pushing:** Verify CI will pass by running the full test suite
@@ -73,7 +79,9 @@ deno task ok
 5. **Before Releases:** Run `deno publish --dry-run` to catch JSR validation errors
 
 ### Testing Generated Projects
+
 Once templates exist (Phase 2+):
+
 - **Smoke Tests:** `deno task test:templates` - Validates generated projects scaffold correctly
 - **Runtime Tests:** CI matrix tests generated projects on Deno/Node/Bun
 - **Snapshot Tests:** Catch unintended template changes
@@ -133,12 +141,14 @@ Once templates exist (Phase 2+):
 ## Contributing
 
 ### Before Starting Work
+
 1. Check [TASKS.md](./TASKS.md) for available tasks and their priorities
 2. Comment on relevant GitHub issues or create one if needed
 3. Ensure your environment meets prerequisites listed above
 4. Review recent commits to understand current patterns
 
 ### Development Workflow
+
 1. **Create a Feature Branch:** `git checkout -b feature/your-feature-name` or `fix/bug-description`
 2. **Make Changes:** Follow coding conventions, write tests for new functionality
 3. **Test Thoroughly:** Run `deno task ok` and relevant smoke tests
@@ -147,6 +157,7 @@ Once templates exist (Phase 2+):
 6. **Address Review Feedback:** Respond to comments, make requested changes
 
 ### Pull Request Guidelines
+
 - **Title:** Clear, descriptive summary (e.g., "feat(cli): add doctor command for environment
   validation")
 - **Description:** Reference PLAN.md sections, explain rationale, list testing performed
@@ -154,10 +165,13 @@ Once templates exist (Phase 2+):
 - **Size:** Keep PRs focused; split large changes into logical chunks
 
 ### Code Review Standards
+
 - **Response Time:** Aim to review PRs within 48 hours
 - **Feedback Style:** Constructive, specific, reference documentation when applicable
 - **Approval:** At least one maintainer approval required before merge
 
 ### Open Questions & Decisions
-For strategic questions and pending decisions, see **[PLAN.md Section 10](./PLAN.md#10-open-questions--decisions)**.
-Major decisions are documented there with rationale and action items.
+
+For strategic questions and pending decisions, see
+**[PLAN.md Section 10](./PLAN.md#10-open-questions--decisions)**. Major decisions are documented
+there with rationale and action items.

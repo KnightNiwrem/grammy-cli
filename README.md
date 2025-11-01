@@ -1,12 +1,15 @@
 # grammY CLI
 
-A Deno-first scaffolding CLI for bootstrapping production-grade [grammY](https://grammy.dev) Telegram bot projects with optional plugin presets and deployment recipes.
+A Deno-first scaffolding CLI for bootstrapping production-grade [grammY](https://grammy.dev)
+Telegram bot projects with optional plugin presets and deployment recipes.
 
 ## Overview
 
-grammY CLI simplifies the process of creating new Telegram bots powered by the grammY framework. It provides:
+grammY CLI simplifies the process of creating new Telegram bots powered by the grammY framework. It
+provides:
 
-- **Multiple Template Variants**: Minimal TypeScript/JavaScript starters and advanced presets with conversations, menus, rate limiting, and i18n
+- **Multiple Template Variants**: Minimal TypeScript/JavaScript starters and advanced presets with
+  conversations, menus, rate limiting, and i18n
 - **Multi-Runtime Support**: Generate projects compatible with Deno, Node.js (≥18), and Bun (≥1.1)
 - **Plugin Integration**: Pre-configured templates with official grammY plugins
 - **Deployment Ready**: Includes deployment recipes for Deno Deploy, Node, and Bun environments
