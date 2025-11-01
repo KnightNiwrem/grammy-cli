@@ -31,5 +31,5 @@ jobs:
         if: matrix.testType == 'fmt'
 
       - name: Run tests
-        run: deno test --allow-import test
+        run: deno test
         if: matrix.testType == 'test'
