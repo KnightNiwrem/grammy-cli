@@ -31,6 +31,43 @@ function shouldLog(current: LogLevel, candidate: LogLevel): boolean {
   return levelWeights[candidate] >= levelWeights[current];
 }
 
+interface ConsoleLike {
+  readonly debug?: (...args: unknown[]) => void;
+  readonly info?: (...args: unknown[]) => void;
+  readonly warn?: (...args: unknown[]) => void;
+  readonly error?: (...args: unknown[]) => void;
+  readonly log?: (...args: unknown[]) => void;
+}
+
+interface TextEncoderConstructor {
+  new (): {
+    encode(input: string): Uint8Array;
+  };
+}
+
+function encodeText(text: string): Uint8Array {
+  const ctor = (globalThis as { TextEncoder?: TextEncoderConstructor }).TextEncoder;
+  if (typeof ctor === "function") {
+    return new ctor().encode(`${text}\n`);
+  }
+
+  const output = new Uint8Array(text.length + 1);
+  for (let index = 0; index < text.length; index += 1) {
+    output[index] = text.charCodeAt(index) & 0xff;
+  }
+  output[output.length - 1] = 0x0a;
+  return output;
+}
+
+function writeFallback(text: string): void {
+  const data = encodeText(text);
+  try {
+    Deno.stdout.writeSync(data);
+  } catch {
+    // ignore fallback errors to avoid crashes while logging
+  }
+}
+
 function defaultSink(entry: LogEntry): void {
   const { level, namespace, message, timestamp, metadata } = entry;
   const time = timestamp.toISOString();
@@ -40,18 +77,41 @@ function defaultSink(entry: LogEntry): void {
     : `${message} ${JSON.stringify(metadata)}`;
   const text = `${time} ${prefix} ${payload}`;
 
+  const consoleLike = (globalThis as { console?: ConsoleLike }).console;
+  const logger = consoleLike ?? {};
+
   switch (level) {
     case "debug":
-      console.debug(text);
+      if (typeof logger.debug === "function") {
+        logger.debug(text);
+      } else if (typeof logger.log === "function") {
+        logger.log(text);
+      } else {
+        writeFallback(text);
+      }
       break;
     case "info":
-      console.info(text);
+      if (typeof logger.info === "function") {
+        logger.info(text);
+      } else if (typeof logger.log === "function") {
+        logger.log(text);
+      } else {
+        writeFallback(text);
+      }
       break;
     case "warn":
-      console.warn(text);
+      if (typeof logger.warn === "function") {
+        logger.warn(text);
+      } else {
+        writeFallback(text);
+      }
       break;
     case "error":
-      console.error(text);
+      if (typeof logger.error === "function") {
+        logger.error(text);
+      } else {
+        writeFallback(text);
+      }
       break;
   }
 }

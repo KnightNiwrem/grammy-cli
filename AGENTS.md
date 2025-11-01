@@ -40,7 +40,7 @@
 
 ## CLI Implementation Notes
 
-- Import Commander via `import { Command } from "npm:commander@^12";` and call
+- Import Commander via `import { Command } from "npm:commander@14.0.1";` and call
   `await program.parseAsync(Deno.args);`.
 - Capture terminal width using `Deno.consoleSize` when available; otherwise fall back to 80 columns
   to avoid wrapping issues noted in Commander x Deno discussions.

@@ -25,7 +25,7 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "lib": ["deno.ns", "deno.console", "dom"]
+    "lib": ["deno.ns", "deno.console"]
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1.0.15",
