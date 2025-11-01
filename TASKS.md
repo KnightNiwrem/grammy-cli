@@ -7,10 +7,10 @@
 
 ## Phase 0 – Foundations
 
-- [ ] (H) Establish repo scaffolding (`src/`, `templates/`, `scripts/`) and baseline `deno.json`.
-- [ ] (H) Configure lint/format/test tasks plus `deno.lock` resolution.
-- [ ] (M) Draft minimal CI workflow running `deno fmt --check`, `deno lint`, `deno test`.
-- [ ] (H) Implement shared utilities (logger, fs helpers, runtime detection).
+- [x] (H) Establish repo scaffolding (`src/`, `templates/`, `scripts/`) and baseline `deno.json`.
+- [x] (H) Configure lint/format/test tasks plus `deno.lock` resolution.
+- [x] (M) Draft minimal CI workflow running `deno fmt --check`, `deno lint`, `deno test`.
+- [x] (H) Implement shared utilities (logger, fs helpers, runtime detection).
 
 ## Phase 1 – CLI Core
 
