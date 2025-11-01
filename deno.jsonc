@@ -1,0 +1,16 @@
+{
+  "lock": false,
+  "tasks": {
+    "check": "deno cache --allow-import --check=all src/mod.ts",
+    "test": "deno test --allow-import test",
+    "ok": "deno fmt && deno lint && deno task test && deno task check",
+    "clean": "git clean -fX out test/cov_profile test/coverage coverage.lcov"
+  },
+  "exclude": [
+    "./node_modules/",
+    "./dist/",
+    "./package-lock.json",
+    "./test/cov_profile"
+  ],
+  "fmt": { "proseWrap": "preserve" }
+}
