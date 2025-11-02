@@ -1,6 +1,8 @@
 import { Command } from "commander";
 import { createLogger, Logger, selectLogLevel } from "./utils/logger.ts";
-import { detectRuntime } from "./utils/runtime.ts";
+import { detectRuntime, Runtime } from "./utils/runtime.ts";
+import { listCommand } from "./commands/list.ts";
+import { doctorCommand } from "./commands/doctor.ts";
 
 export interface CreateCliOptions {
   readonly logger?: Logger;
@@ -8,9 +10,13 @@ export interface CreateCliOptions {
   readonly name?: string;
 }
 
+export interface GlobalOptions {
+  verbose: boolean;
+  runtime?: Runtime;
+  interactive: boolean;
+}
+
 export function createCli(options: CreateCliOptions = {}): Command {
-  const level = selectLogLevel();
-  const logger = options.logger ?? createLogger({ level });
   const version = options.version ?? "0.0.0";
   const name = options.name ?? "grammy";
 
@@ -19,12 +25,23 @@ export function createCli(options: CreateCliOptions = {}): Command {
     .name(name)
     .description("Scaffold grammY bot starters across runtimes")
     .version(version)
-    .hook("preAction", () => {
+    .option("-v, --verbose", "enable verbose logging", false)
+    .option("--runtime <runtime>", "target runtime (deno|node|bun)")
+    .option("--no-interactive", "disable interactive prompts", false)
+    .hook("preAction", (thisCommand) => {
+      const opts = thisCommand.opts<GlobalOptions>();
+      const level = opts.verbose ? "debug" : selectLogLevel();
+      const logger = options.logger ?? createLogger({ level });
+
       logger.debug(`runtime=${detectRuntime()}`);
-    })
-    .action(() => {
-      logger.info("CLI features are under construction. Track progress in Phase 1 of the plan.");
+      logger.debug(`options=${JSON.stringify(opts)}`);
     });
+
+  // Add subcommands
+  program.addCommand(listCommand);
+  program.addCommand(doctorCommand);
+
+  // No default action - let Commander handle help and unknown commands
 
   return program;
 }
