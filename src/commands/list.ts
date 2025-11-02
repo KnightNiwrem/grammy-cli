@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { createLogger } from "../utils/logger.ts";
+import { createPromptHandler, type PromptOptions } from "../utils/prompts.ts";
 
 export interface TemplateManifest {
   name: string;
@@ -65,14 +66,41 @@ function formatTemplateList(templates: TemplateManifest[]): string {
 export const listCommand = new Command("list")
   .description("List available templates")
   .option("--json", "output templates in JSON format", false)
-  .action((options) => {
+  .option("--interactive", "interactive template selection", false)
+  .action(async (options, command) => {
     const logger = createLogger();
+
+    // Get global options from parent command
+    const globalOpts = command.parent?.opts() || {};
+    const promptOptions: PromptOptions = {
+      interactive: options.interactive && globalOpts.interactive !== false,
+    };
+    const prompts = createPromptHandler(promptOptions);
 
     try {
       const templates = loadTemplateManifests();
 
       if (options.json) {
         console.log(JSON.stringify(templates, null, 2));
+      } else if (options.interactive && promptOptions.interactive) {
+        // Interactive mode: let user select a template
+        console.log("Available templates:\n");
+        console.log(formatTemplateList(templates));
+
+        const selectedTemplate = await prompts.select(
+          "Select a template to learn more about",
+          templates.map((t) => ({ name: `${t.name} - ${t.description}`, value: t.name })),
+        );
+
+        const template = templates.find((t) => t.name === selectedTemplate);
+        if (template) {
+          console.log(`\nTemplate: ${template.name}`);
+          console.log(`Description: ${template.description}`);
+          console.log(`Runtime support: ${template.runtime.join(", ")}`);
+          console.log(
+            `Plugins: ${template.plugins.length > 0 ? template.plugins.join(", ") : "none"}`,
+          );
+        }
       } else {
         console.log(formatTemplateList(templates));
       }
@@ -82,6 +110,11 @@ export const listCommand = new Command("list")
       logger.error(
         `Failed to list templates: ${error instanceof Error ? error.message : String(error)}`,
       );
-      Deno.exit(1);
+      if (error instanceof Error && error.name === "ExitPromptError") {
+        // User cancelled with Ctrl+C
+        Deno.exit(130);
+      } else {
+        Deno.exit(1);
+      }
     }
   });
