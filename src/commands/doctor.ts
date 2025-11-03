@@ -5,7 +5,7 @@ export interface DoctorCommandOptions {
   readonly logger: Logger;
 }
 
-interface Check {
+export interface Check {
   readonly name: string;
   readonly status: "pass" | "fail" | "warn";
   readonly message: string;
@@ -99,7 +99,7 @@ async function checkNodeVersion(): Promise<Check> {
 
     return {
       name: "Node.js",
-      status: isValid ? "pass" : "warn",
+      status: isValid ? "pass" : "fail",
       message: `v${version}${isValid ? "" : " (requires ≥18)"}`,
     };
   } catch {
@@ -137,7 +137,7 @@ async function checkBunVersion(): Promise<Check> {
 
     return {
       name: "Bun",
-      status: isValid ? "pass" : "warn",
+      status: isValid ? "pass" : "fail",
       message: `v${version}${isValid ? "" : " (requires ≥1.1)"}`,
     };
   } catch {
@@ -147,6 +147,84 @@ async function checkBunVersion(): Promise<Check> {
       message: "Bun not detected",
     };
   }
+}
+
+interface DenoConfig {
+  readonly imports?: Record<string, string>;
+}
+
+interface DenoLock {
+  readonly npm?: Record<string, unknown>;
+  readonly jsr?: Record<string, unknown>;
+}
+
+function readJsonFile<T>(path: string): T | undefined {
+  try {
+    const text = Deno.readTextFileSync(path);
+    return JSON.parse(text) as T;
+  } catch {
+    return undefined;
+  }
+}
+
+export function checkImportCompatibility(): Check {
+  const configs: Array<{ path: string; config?: DenoConfig }> = [
+    { path: "deno.json", config: readJsonFile<DenoConfig>("deno.json") },
+    { path: "deno.jsonc", config: readJsonFile<DenoConfig>("deno.jsonc") },
+  ];
+
+  const configEntry = configs.find((entry) => entry.config !== undefined);
+  const config = configEntry?.config;
+
+  if (!config) {
+    return {
+      name: "JSR/npm Imports",
+      status: "warn",
+      message: "No deno.json or deno.jsonc found",
+    };
+  }
+
+  const specifiers = Object.values(config.imports ?? {});
+  const hasNpm = specifiers.some((value) => value.startsWith("npm:"));
+  const hasJsr = specifiers.some((value) => value.startsWith("jsr:"));
+
+  if (!hasNpm && !hasJsr) {
+    return {
+      name: "JSR/npm Imports",
+      status: "warn",
+      message: "No npm: or jsr: specifiers configured",
+    };
+  }
+
+  const lock = readJsonFile<DenoLock>("deno.lock");
+  const lockHasNpm = Boolean(lock?.npm && Object.keys(lock.npm).length > 0);
+  const lockHasJsr = Boolean(lock?.jsr && Object.keys(lock.jsr).length > 0);
+
+  const issues: string[] = [];
+  if (hasNpm && !lockHasNpm) {
+    issues.push("lockfile missing npm dependencies");
+  }
+  if (hasJsr && !lockHasJsr) {
+    issues.push("lockfile missing jsr dependencies");
+  }
+
+  if (issues.length > 0) {
+    return {
+      name: "JSR/npm Imports",
+      status: "warn",
+      message: issues.join("; "),
+    };
+  }
+
+  const modes = [hasJsr ? "JSR" : undefined, hasNpm ? "npm" : undefined]
+    .filter(Boolean)
+    .join(" & ");
+
+  return {
+    name: "JSR/npm Imports",
+    status: "pass",
+    message: `${modes} ready`,
+  };
 }
 
 function checkProjectConfig(): Check {
@@ -227,6 +305,7 @@ export async function doctorCommand(options: DoctorCommandOptions): Promise<void
     await checkNodeVersion(),
     await checkBunVersion(),
     checkProjectConfig(),
+    checkImportCompatibility(),
   ];
 
   for (const check of checks) {

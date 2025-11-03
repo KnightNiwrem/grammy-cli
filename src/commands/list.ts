@@ -4,6 +4,8 @@ import type { TemplateInfo } from "../../templates/index.ts";
 export interface ListCommandOptions {
   readonly logger: Logger;
   readonly json?: boolean;
+  readonly loader?: () => Promise<TemplateInfo[]>;
+  readonly writer?: (message: string) => void;
 }
 
 interface ConsoleLike {
@@ -33,17 +35,30 @@ function formatTable(templates: TemplateInfo[]): string {
     return "No templates available.";
   }
 
+  const header = ["Template", "Description", "Runtimes", "Plugins"];
+  const rows = templates.map((template) => [
+    template.name,
+    template.description,
+    template.runtimes.join(", "),
+    template.plugins.length > 0 ? template.plugins.join(", ") : "—",
+  ]);
+
+  const matrix = [header, ...rows];
+  const widths = header.map((_, index) =>
+    Math.max(...matrix.map((row) => row[index]?.length ?? 0))
+  );
+
+  const separator = widths.map((width) => "-".repeat(width)).join("  ");
+
+  const formatRow = (row: readonly string[]) =>
+    row.map((cell, index) => cell.padEnd(widths[index])).join("  ");
+
   const lines: string[] = [];
   lines.push("Available Templates:\n");
-
-  for (const template of templates) {
-    lines.push(`  ${template.name}`);
-    lines.push(`    Description: ${template.description}`);
-    lines.push(`    Runtimes: ${template.runtimes.join(", ")}`);
-    if (template.plugins.length > 0) {
-      lines.push(`    Plugins: ${template.plugins.join(", ")}`);
-    }
-    lines.push("");
+  lines.push(formatRow(header));
+  lines.push(separator);
+  for (const row of rows) {
+    lines.push(formatRow(row));
   }
 
   return lines.join("\n");
@@ -51,14 +66,16 @@ function formatTable(templates: TemplateInfo[]): string {
 
 export async function listCommand(options: ListCommandOptions): Promise<void> {
   const { logger, json } = options;
+  const loader = options.loader ?? loadTemplates;
+  const writer = options.writer ?? ((message: string) => writeLine(logger, message));
 
   logger.debug("Loading templates");
-  const templates = await loadTemplates();
+  const templates = await loader();
   logger.debug(`Found ${templates.length} templates`);
 
   if (json) {
-    writeLine(logger, JSON.stringify(templates, null, 2));
+    writer(JSON.stringify(templates, null, 2));
   } else {
-    writeLine(logger, formatTable(templates));
+    writer(formatTable(templates));
   }
 }
