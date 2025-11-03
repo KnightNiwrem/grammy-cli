@@ -67,7 +67,14 @@ operational.
 **Phase Goal:** Build functional CLI with core commands (list, doctor) and options parsing.
 **Timeline:** 3-4 days | **Status:** In Progress
 
-### P1.1 - [ ] (H) Implement Commander-based entry point
+**Current Gaps Before Phase 2:**
+
+- Wire CLI version flag to `deno.json` and add option parsing coverage (P1.1).
+- Improve `list` output formatting and add regression tests (P1.2).
+- Add JSR/npm compatibility validation and tighten failure handling in `doctor` (P1.3).
+- Implement interactive prompt layer with graceful Ctrl+C handling (P1.4).
+
+### P1.1 - [~] (H) Implement Commander-based entry point
 
 - **Effort:** 4-6h
 - **Dependencies:** P0.4
@@ -79,9 +86,11 @@ operational.
   - Version flag displays current version from `deno.json`
   - Entry point callable via `deno run src/cli.ts`
   - Unit tests for option parsing
+- **Status Notes:** Commander entry point exists with global flags, but version flag is still
+  hard-coded and option parsing lacks tests.
 - **Testing:** Run `deno run src/cli.ts --help` and verify output
 
-### P1.2 - [ ] (H) Build `list` command
+### P1.2 - [~] (H) Build `list` command
 
 - **Effort:** 3-4h
 - **Dependencies:** P1.1
@@ -93,9 +102,11 @@ operational.
   - Formats output in readable columns
   - `--json` flag outputs machine-readable JSON
   - Graceful error handling if manifest missing/invalid
+- **Status Notes:** Command loads stub manifest and supports JSON output, but table formatting
+  remains basic and there are no regression tests yet.
 - **Testing:** Create stub manifest, run `list`, verify output format
 
-### P1.3 - [ ] (H) Build `doctor` command
+### P1.3 - [~] (H) Build `doctor` command
 
 - **Effort:** 4-5h
 - **Dependencies:** P1.1, P0.4
@@ -109,6 +120,8 @@ operational.
   - Validates JSR/npm import compatibility
   - Color-coded output (✓ green for pass, ✗ red for fail, - yellow for warnings)
   - Exit code 0 if all checks pass, 1 if critical failures
+- **Status Notes:** Version checks and colorized output implemented, but JSR/npm compatibility
+  validation is missing and Node/Bun failures only warn, so critical failure paths need tightening.
 - **Testing:** Run in various environments, verify detection accuracy
 
 ### P1.4 - [ ] (M) Wire interactive prompt layer
@@ -123,6 +136,8 @@ operational.
   - Handles Ctrl+C gracefully (cleanup, exit code 130)
   - Works in TTY and non-TTY environments
   - Unit tests with mocked prompts
+- **Status Notes:** Not started; required to complete Phase 1 before moving into template
+  integration.
 - **Testing:** Test both interactive and non-interactive modes
 
 **Phase Exit Criteria:** All P1.x tasks complete, `list` and `doctor` commands functional, help text
