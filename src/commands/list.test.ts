@@ -15,12 +15,14 @@ Deno.test("listCommand formats templates in table view", async () => {
           description: "Minimal TypeScript bot with env config and lint/test tasks",
           plugins: [],
           runtimes: ["deno", "node", "bun"],
+          files: [{ path: "bot.ts.eta" }],
         },
         {
           name: "minimal-js",
           description: "Minimal JavaScript bot with JSDoc type hints",
-          plugins: ["sessions"],
+          plugins: ["menu"],
           runtimes: ["deno", "node"],
+          files: [{ path: "bot.js.eta" }],
         },
       ]),
     writer: (value) => {
@@ -32,7 +34,7 @@ Deno.test("listCommand formats templates in table view", async () => {
   assertStringIncludes(output, "Template");
   assertStringIncludes(output, "minimal-ts");
   assertStringIncludes(output, "minimal-js");
-  assertStringIncludes(output, "sessions");
+  assertStringIncludes(output, "menu");
 });
 
 Deno.test("listCommand emits templates as JSON when requested", async () => {
@@ -47,6 +49,7 @@ Deno.test("listCommand emits templates as JSON when requested", async () => {
           description: "Example",
           plugins: [],
           runtimes: ["deno"],
+          files: [{ path: "bot.ts.eta" }],
         },
       ]),
     writer: (value) => {

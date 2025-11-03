@@ -1,10 +1,11 @@
 import { Logger } from "../utils/index.ts";
-import type { TemplateInfo } from "../../templates/index.ts";
+import { loadTemplateCatalog } from "../template/loader.ts";
+import type { TemplateManifest } from "../template/types.ts";
 
 export interface ListCommandOptions {
   readonly logger: Logger;
   readonly json?: boolean;
-  readonly loader?: () => Promise<TemplateInfo[]>;
+  readonly loader?: () => Promise<TemplateManifest[]>;
   readonly writer?: (message: string) => void;
 }
 
@@ -21,16 +22,16 @@ function writeLine(logger: Logger, message = ""): void {
   }
 }
 
-async function loadTemplates(): Promise<TemplateInfo[]> {
+async function loadTemplates(): Promise<TemplateManifest[]> {
   try {
-    const module = await import("../../templates/index.ts");
-    return module.templates ?? [];
+    const catalog = await loadTemplateCatalog();
+    return catalog.map((entry) => entry.manifest);
   } catch {
     return [];
   }
 }
 
-function formatTable(templates: TemplateInfo[]): string {
+function formatTable(templates: TemplateManifest[]): string {
   if (templates.length === 0) {
     return "No templates available.";
   }

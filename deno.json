@@ -8,9 +8,9 @@
   "tasks": {
     "fmt": "deno fmt",
     "lint": "deno lint",
-    "test": "deno test",
+    "test": "deno test --allow-read --allow-write",
     "check": "deno check src/cli.ts",
-    "ok": "deno fmt && deno lint && deno test && deno check src/cli.ts"
+    "ok": "deno fmt && deno lint && deno test --allow-read --allow-write && deno check src/cli.ts"
   },
   "lint": {
     "rules": {
