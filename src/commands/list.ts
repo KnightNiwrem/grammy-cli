@@ -1,15 +1,22 @@
 import { Logger } from "../utils/index.ts";
+import type { TemplateInfo } from "../../templates/index.ts";
 
 export interface ListCommandOptions {
   readonly logger: Logger;
   readonly json?: boolean;
 }
 
-interface TemplateInfo {
-  readonly name: string;
-  readonly description: string;
-  readonly plugins: readonly string[];
-  readonly runtimes: readonly string[];
+interface ConsoleLike {
+  readonly log?: (...args: unknown[]) => void;
+}
+
+function writeLine(logger: Logger, message = ""): void {
+  const consoleLike = (globalThis as { console?: ConsoleLike }).console;
+  if (typeof consoleLike?.log === "function") {
+    consoleLike.log(message);
+  } else {
+    logger.info(message);
+  }
 }
 
 async function loadTemplates(): Promise<TemplateInfo[]> {
@@ -50,8 +57,8 @@ export async function listCommand(options: ListCommandOptions): Promise<void> {
   logger.debug(`Found ${templates.length} templates`);
 
   if (json) {
-    console.log(JSON.stringify(templates, null, 2));
+    writeLine(logger, JSON.stringify(templates, null, 2));
   } else {
-    console.log(formatTable(templates));
+    writeLine(logger, formatTable(templates));
   }
 }

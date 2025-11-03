@@ -11,6 +11,38 @@ interface Check {
   readonly message: string;
 }
 
+interface TextDecoderConstructor {
+  new (): {
+    decode(input: Uint8Array): string;
+  };
+}
+
+interface ConsoleLike {
+  readonly log?: (...args: unknown[]) => void;
+}
+
+function decodeText(data: Uint8Array): string {
+  const ctor = (globalThis as { TextDecoder?: TextDecoderConstructor }).TextDecoder;
+  if (typeof ctor === "function") {
+    return new ctor().decode(data);
+  }
+
+  let result = "";
+  for (const byte of data) {
+    result += String.fromCharCode(byte);
+  }
+  return result;
+}
+
+function writeLine(logger: Logger, message = ""): void {
+  const consoleLike = (globalThis as { console?: ConsoleLike }).console;
+  if (typeof consoleLike?.log === "function") {
+    consoleLike.log(message);
+  } else {
+    logger.info(message);
+  }
+}
+
 function checkDenoVersion(): Check {
   try {
     if (typeof Deno === "undefined" || !Deno.version?.deno) {
@@ -59,7 +91,7 @@ async function checkNodeVersion(): Promise<Check> {
       };
     }
 
-    const version = new TextDecoder().decode(output.stdout).trim().replace(/^v/, "");
+    const version = decodeText(output.stdout).trim().replace(/^v/, "");
     const parts = version.split(".").map(Number);
     const major = parts[0] ?? 0;
 
@@ -96,7 +128,7 @@ async function checkBunVersion(): Promise<Check> {
       };
     }
 
-    const version = new TextDecoder().decode(output.stdout).trim();
+    const version = decodeText(output.stdout).trim();
     const parts = version.split(".").map(Number);
     const major = parts[0] ?? 0;
     const minor = parts[1] ?? 0;
@@ -194,7 +226,7 @@ export async function doctorCommand(options: DoctorCommandOptions): Promise<void
   const { logger } = options;
 
   logger.debug("Running environment checks");
-  console.log("Environment Diagnostics:\n");
+  writeLine(logger, "Environment Diagnostics:\n");
 
   const runtime = detectRuntime();
   logger.debug(`Detected runtime: ${runtime}`);
@@ -207,16 +239,16 @@ export async function doctorCommand(options: DoctorCommandOptions): Promise<void
   ];
 
   for (const check of checks) {
-    console.log(formatCheck(check));
+    writeLine(logger, formatCheck(check));
   }
 
   const hasCriticalFailure = checks.some((c) => c.status === "fail");
 
-  console.log();
+  writeLine(logger);
   if (hasCriticalFailure) {
-    console.log("\x1b[31m✗ Critical checks failed\x1b[0m");
+    writeLine(logger, "\x1b[31m✗ Critical checks failed\x1b[0m");
     Deno.exit(1);
   } else {
-    console.log("\x1b[32m✓ All critical checks passed\x1b[0m");
+    writeLine(logger, "\x1b[32m✓ All critical checks passed\x1b[0m");
   }
 }
