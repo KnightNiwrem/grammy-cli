@@ -31,5 +31,5 @@ jobs:
         if: matrix.testType == 'fmt'
 
       - name: Run tests
-        run: deno test
+        run: deno test --allow-read --allow-write
         if: matrix.testType == 'test'
