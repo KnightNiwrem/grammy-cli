@@ -157,7 +157,7 @@ export function createPrompter(options: CreatePrompterOptions = {}): Prompter {
     async multiSelect<T>(promptOptions: MultiSelectPromptOptions<T>) {
       if (!interactive) {
         const fallback = resolveFallback(promptOptions);
-        return Array.from(fallback);
+        return fallback;
       }
 
       const driverLogger = promptOptions.logger ?? logger;
