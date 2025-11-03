@@ -1,6 +1,8 @@
 import { Command } from "commander";
+import denoConfig from "../deno.json" with { type: "json" };
 import { createLogger, Logger, selectLogLevel } from "./utils/index.ts";
 import { detectRuntime, Runtime } from "./utils/index.ts";
+import { createPrompter, Prompter } from "./prompts/index.ts";
 import { doctorCommand } from "./commands/doctor.ts";
 import { listCommand } from "./commands/list.ts";
 
@@ -8,6 +10,8 @@ export interface GlobalOptions {
   verbose?: boolean;
   runtime?: Runtime;
   interactive?: boolean;
+  logger?: Logger;
+  prompter?: Prompter;
 }
 
 export interface CreateCliOptions {
@@ -15,6 +19,9 @@ export interface CreateCliOptions {
   readonly version?: string;
   readonly name?: string;
 }
+
+const DEFAULT_VERSION = typeof denoConfig.version === "string" ? denoConfig.version : "0.0.0";
+const DEFAULT_NAME = typeof denoConfig.name === "string" ? denoConfig.name : "grammy-cli";
 
 function getTerminalWidth(): number {
   try {
@@ -28,8 +35,8 @@ function getTerminalWidth(): number {
 export function createCli(options: CreateCliOptions = {}): Command {
   const level = selectLogLevel();
   const logger = options.logger ?? createLogger({ level });
-  const version = options.version ?? "0.0.0";
-  const name = options.name ?? "grammy-cli";
+  const version = options.version ?? DEFAULT_VERSION;
+  const name = options.name ?? DEFAULT_NAME;
 
   const program = new Command();
   program
@@ -49,13 +56,27 @@ export function createCli(options: CreateCliOptions = {}): Command {
     .option("--no-interactive", "disable interactive prompts")
     .hook("preAction", (thisCommand) => {
       const opts = thisCommand.opts<GlobalOptions>();
+      const injectedLogger = opts.logger ?? options.logger;
+      const verboseLogger = opts.verbose && injectedLogger === undefined
+        ? createLogger({ level: "debug" })
+        : undefined;
+      const activeLogger = injectedLogger ?? verboseLogger ?? logger;
+
+      thisCommand.setOptionValue("logger", activeLogger);
+      thisCommand.setOptionValue(
+        "prompter",
+        createPrompter({ interactive: opts.interactive, logger: activeLogger }),
+      );
+
       if (opts.verbose) {
-        const verboseLogger = createLogger({ level: "debug" });
-        thisCommand.setOptionValue("logger", verboseLogger);
-        verboseLogger.debug(`runtime=${detectRuntime()}`);
-        verboseLogger.debug(`options=${JSON.stringify(opts)}`);
-      } else {
-        thisCommand.setOptionValue("logger", logger);
+        activeLogger.debug(`runtime=${detectRuntime()}`);
+        activeLogger.debug(`options=${
+          JSON.stringify({
+            ...opts,
+            logger: undefined,
+            prompter: undefined,
+          })
+        }`);
       }
     });
 
