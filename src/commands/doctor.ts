@@ -1,3 +1,4 @@
+import { parse as parseJsonc } from "@std/jsonc";
 import { Logger } from "../utils/index.ts";
 import { detectRuntime } from "../utils/index.ts";
 
@@ -161,6 +162,9 @@ interface DenoLock {
 function readJsonFile<T>(path: string): T | undefined {
   try {
     const text = Deno.readTextFileSync(path);
+    if (path.endsWith(".jsonc")) {
+      return parseJsonc(text) as T;
+    }
     return JSON.parse(text) as T;
   } catch {
     return undefined;

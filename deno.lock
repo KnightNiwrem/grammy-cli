@@ -5,6 +5,8 @@
     "jsr:@std/fs@1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.10": "1.0.12",
     "jsr:@std/internal@^1.0.12": "1.0.12",
+    "jsr:@std/json@1": "1.0.2",
+    "jsr:@std/jsonc@1.0.1": "1.0.1",
     "jsr:@std/path@1.1.2": "1.1.2",
     "npm:@inquirer/prompts@7.8.6": "7.8.6",
     "npm:commander@14.0.1": "14.0.1",
@@ -22,6 +24,15 @@
     },
     "@std/internal@1.0.12": {
       "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
+    },
+    "@std/json@1.0.2": {
+      "integrity": "d9e5497801c15fb679f55a2c01c7794ad7a5dfda4dd1bebab5e409cb5e0d34d4"
+    },
+    "@std/jsonc@1.0.1": {
+      "integrity": "6b36956e2a7cbb08ca5ad7fbec72e661e6217c202f348496ea88747636710dda",
+      "dependencies": [
+        "jsr:@std/json"
+      ]
     },
     "@std/path@1.1.2": {
       "integrity": "c0b13b97dfe06546d5e16bf3966b1cadf92e1cc83e56ba5476ad8b498d9e3038",
@@ -238,6 +249,7 @@
     "dependencies": [
       "jsr:@std/assert@1.0.15",
       "jsr:@std/fs@1.0.19",
+      "jsr:@std/jsonc@1.0.1",
       "jsr:@std/path@1.1.2",
       "npm:@inquirer/prompts@7.8.6",
       "npm:commander@14.0.1",

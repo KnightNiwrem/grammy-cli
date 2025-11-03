@@ -56,14 +56,16 @@ export function createCli(options: CreateCliOptions = {}): Command {
     .option("--no-interactive", "disable interactive prompts")
     .hook("preAction", (thisCommand) => {
       const opts = thisCommand.opts<GlobalOptions>();
-      const verboseLogger = opts.verbose ? createLogger({ level: "debug" }) : undefined;
-      const activeLogger = verboseLogger ?? logger;
-      const interactive = opts.interactive !== false;
+      const injectedLogger = opts.logger ?? options.logger;
+      const verboseLogger = opts.verbose && injectedLogger === undefined
+        ? createLogger({ level: "debug" })
+        : undefined;
+      const activeLogger = injectedLogger ?? verboseLogger ?? logger;
 
       thisCommand.setOptionValue("logger", activeLogger);
       thisCommand.setOptionValue(
         "prompter",
-        createPrompter({ interactive, logger: activeLogger }),
+        createPrompter({ interactive: opts.interactive, logger: activeLogger }),
       );
 
       if (opts.verbose) {

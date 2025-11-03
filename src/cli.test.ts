@@ -27,9 +27,8 @@ Deno.test("createCli parses global options", async () => {
   assertEquals(options.verbose, undefined);
 });
 
-Deno.test("createCli enables verbose logger when requested", async () => {
-  const baseLogger = createLogger({ level: "info" });
-  const program = createCli({ logger: baseLogger, name: "test-cli" });
+Deno.test("createCli enables verbose logger by default", async () => {
+  const program = createCli({ name: "test-cli" });
   program.exitOverride();
 
   program.command("noop").action(() => {});
@@ -39,6 +38,20 @@ Deno.test("createCli enables verbose logger when requested", async () => {
   const options = program.opts<GlobalOptions>();
   assertExists(options.logger);
   assertEquals(options.logger?.level, "debug");
+});
+
+Deno.test("createCli preserves injected logger when verbose", async () => {
+  const injectedLogger = createLogger({ level: "info" });
+  const program = createCli({ logger: injectedLogger, name: "test-cli" });
+  program.exitOverride();
+
+  program.command("noop").action(() => {});
+
+  await program.parseAsync(["--verbose", "noop"], { from: "user" });
+
+  const options = program.opts<GlobalOptions>();
+  assertExists(options.logger);
+  assertEquals(options.logger, injectedLogger);
 });
 
 Deno.test("createCli attaches prompter for commands", async () => {
