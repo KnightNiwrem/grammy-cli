@@ -62,23 +62,23 @@ operational.
 
 ---
 
-## Phase 1 – CLI Core 🚧 **IN PROGRESS**
+## Phase 1 – CLI Core ✅ **COMPLETE**
 
 **Phase Goal:** Build functional CLI with core commands (list, doctor) and options parsing.
-**Timeline:** 3-4 days | **Status:** In Progress
+**Timeline:** 3-4 days | **Status:** Complete
 
 **Current Gaps Before Phase 2:**
 
-- Wire CLI version flag to `deno.json` and add option parsing coverage (P1.1).
-- Improve `list` output formatting and add regression tests (P1.2).
-- Add JSR/npm compatibility validation and tighten failure handling in `doctor` (P1.3).
-- Implement interactive prompt layer with graceful Ctrl+C handling (P1.4).
+- Normalize `--runtime` flag output to lowercase within CLI hooks and add a regression test so
+  downstream phases receive canonical runtime identifiers.
+- Add an integration test that exercises `doctor` failure paths and asserts the CLI exits with
+  status code 1 to guard future changes.
 
-### P1.1 - [~] (H) Implement Commander-based entry point
+### P1.1 - [x] (H) Implement Commander-based entry point
 
 - **Effort:** 4-6h
 - **Dependencies:** P0.4
-- **Owner:** TBD
+- **Owner:** KnightNiwrem
 - **Acceptance Criteria:**
   - `src/cli.ts` exports Commander program
   - Global options: `--verbose`, `--runtime [deno|node|bun]`, `--no-interactive`
@@ -86,15 +86,16 @@ operational.
   - Version flag displays current version from `deno.json`
   - Entry point callable via `deno run src/cli.ts`
   - Unit tests for option parsing
-- **Status Notes:** Commander entry point exists with global flags, but version flag is still
-  hard-coded and option parsing lacks tests.
-- **Testing:** Run `deno run src/cli.ts --help` and verify output
+- **Status Notes:** Commander program sources name/version from `deno.json`, configures terminal
+  width handling, and option parsing (verbose/runtime/no-interactive) is covered by
+  `src/cli.test.ts`.
+- **Testing:** `deno test src/cli.test.ts`
 
-### P1.2 - [~] (H) Build `list` command
+### P1.2 - [x] (H) Build `list` command
 
 - **Effort:** 3-4h
 - **Dependencies:** P1.1
-- **Owner:** TBD
+- **Owner:** KnightNiwrem
 - **Acceptance Criteria:**
   - Command: `grammy-cli list [options]`
   - Reads template manifest from `templates/index.ts` (stub acceptable for now)
@@ -102,15 +103,15 @@ operational.
   - Formats output in readable columns
   - `--json` flag outputs machine-readable JSON
   - Graceful error handling if manifest missing/invalid
-- **Status Notes:** Command loads stub manifest and supports JSON output, but table formatting
-  remains basic and there are no regression tests yet.
-- **Testing:** Create stub manifest, run `list`, verify output format
+- **Status Notes:** Command reads the stub manifest, renders padded column output, supports JSON
+  mode, and includes regression tests covering table/JSON/empty states.
+- **Testing:** `deno test src/commands/list.test.ts`
 
-### P1.3 - [~] (H) Build `doctor` command
+### P1.3 - [x] (H) Build `doctor` command
 
 - **Effort:** 4-5h
 - **Dependencies:** P1.1, P0.4
-- **Owner:** TBD
+- **Owner:** KnightNiwrem
 - **Acceptance Criteria:**
   - Command: `grammy-cli doctor [options]`
   - Detects Deno version and validates ≥1.46
@@ -120,15 +121,15 @@ operational.
   - Validates JSR/npm import compatibility
   - Color-coded output (✓ green for pass, ✗ red for fail, - yellow for warnings)
   - Exit code 0 if all checks pass, 1 if critical failures
-- **Status Notes:** Version checks and colorized output implemented, but JSR/npm compatibility
-  validation is missing and Node/Bun failures only warn, so critical failure paths need tightening.
-- **Testing:** Run in various environments, verify detection accuracy
+- **Status Notes:** Command now validates Deno/Node/Bun versions, inspects project configs, enforces
+  JSR/npm lock alignment, and emits colorized summaries with non-zero exit on failures.
+- **Testing:** `deno test src/commands/doctor.test.ts`
 
-### P1.4 - [ ] (M) Wire interactive prompt layer
+### P1.4 - [x] (M) Wire interactive prompt layer
 
 - **Effort:** 3-4h
 - **Dependencies:** P1.1
-- **Owner:** TBD
+- **Owner:** KnightNiwrem
 - **Acceptance Criteria:**
   - Integrate `npm:prompts` for interactive inputs
   - Fallback to flag-based inputs when `--no-interactive` set
@@ -136,12 +137,16 @@ operational.
   - Handles Ctrl+C gracefully (cleanup, exit code 130)
   - Works in TTY and non-TTY environments
   - Unit tests with mocked prompts
-- **Status Notes:** Not started; required to complete Phase 1 before moving into template
-  integration.
-- **Testing:** Test both interactive and non-interactive modes
+- **Status Notes:** Prompt factory wraps `npm:prompts`, supports flag fallbacks, normalizes choice
+  labels, and handles Ctrl+C by exiting with code 130; comprehensive unit tests mock drivers and
+  abort flows.
+- **Testing:** `deno test src/prompts/index.test.ts`
 
 **Phase Exit Criteria:** All P1.x tasks complete, `list` and `doctor` commands functional, help text
 comprehensive.
+
+**Phase Retrospective:** CLI core delivers version-aware commander setup, polished list/doctor
+commands, and a reusable prompt layer ready for template scaffolding.
 
 ---
 
@@ -439,13 +444,14 @@ documentation complete.
 
 ### Current Sprint Focus
 
-**Phase 1 - CLI Core:** Building foundation with Commander, list, and doctor commands.
+**Phase 2 – Template Engine Integration:** Stand up Eta renderer, manifest loader, and minimal
+templates.
 
 ### Next Up
 
-- P1.1: Commander entry point
-- P1.2: `list` command
-- P1.3: `doctor` command
+- P2.1: Eta renderer + file emission pipeline
+- P2.2: Template manifest schema and loader
+- P2.3: Ship minimal TypeScript template
 
 ### Blocked Tasks
 
@@ -453,4 +459,4 @@ None currently.
 
 ### Task Assignment
 
-All Phase 1 tasks currently unassigned. Check with team lead for task pickup.
+Phase 2 tasks currently unassigned. Coordinate with the team lead before starting implementation.
