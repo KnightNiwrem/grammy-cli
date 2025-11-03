@@ -86,7 +86,6 @@ function isAbortError(error: unknown): boolean {
 function handleAbort(logger: Logger | undefined): never {
   logger?.warn("Prompt cancelled by user");
   Deno.exit(130);
-  throw new Error("Unreachable");
 }
 
 function normalizeChoices<T>(choices: ReadonlyArray<SelectChoice<T>>) {
