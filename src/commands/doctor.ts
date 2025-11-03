@@ -151,33 +151,24 @@ async function checkBunVersion(): Promise<Check> {
 
 function checkProjectConfig(): Check {
   try {
-    const hasDeno = (() => {
-      try {
-        Deno.statSync("deno.json");
-        return true;
-      } catch {
-        try {
-          Deno.statSync("deno.jsonc");
-          return true;
-        } catch {
-          return false;
-        }
-      }
-    })();
+    const configs: string[] = [];
 
-    const hasPackageJson = (() => {
-      try {
-        Deno.statSync("package.json");
-        return true;
-      } catch {
-        return false;
-      }
-    })();
+    const paths: readonly string[] = [
+      "deno.json",
+      "deno.jsonc",
+      "package.json",
+    ];
 
-    if (hasDeno || hasPackageJson) {
-      const configs = [];
-      if (hasDeno) configs.push("deno.json");
-      if (hasPackageJson) configs.push("package.json");
+    for (const path of paths) {
+      try {
+        Deno.statSync(path);
+        configs.push(path);
+      } catch {
+        // ignore missing files
+      }
+    }
+
+    if (configs.length > 0) {
       return {
         name: "Project Config",
         status: "pass",
